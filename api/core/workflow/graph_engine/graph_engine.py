@@ -14,6 +14,7 @@ from collections.abc import Generator
 from typing import TYPE_CHECKING, cast, final
 
 from core.workflow.context import capture_current_context
+from core.mcp.session_manager import McpSessionRegistry
 from core.workflow.enums import NodeExecutionType
 from core.workflow.graph import Graph
 from core.workflow.graph_events import (
@@ -250,6 +251,8 @@ class GraphEngine:
             # Handle completion
             if self._graph_execution.is_paused:
                 pause_reason = self._graph_execution.pause_reason
+                if pause_reason is None:
+                    raise ValueError("Pause reason must be set when graph execution is paused.")
                 if pause_reason is None:
                     raise ValueError("Pause reason must be set when graph execution is paused.")
                 paused_event = GraphRunPausedEvent(
